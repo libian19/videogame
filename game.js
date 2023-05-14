@@ -4,8 +4,16 @@ const btnUp = document.querySelector('#up');
 const btnLeft = document.querySelector('#left');
 const btnRight = document.querySelector('#right');
 const btnDown = document.querySelector('#down');
+const spanLives = document.querySelector('#lives');
+const spanTimes = document.querySelector('#time');
+
 let canvasSize;
 let elemSize;
+let level = 0;
+let lives = 3;
+let startTime;
+let timePlayer;
+let timeInterval;
 
 const playerPosition = {
 	x: undefined,
@@ -33,12 +41,23 @@ function startGame() {
 	game.font = (elemSize -10) + 'px Verdana';
 	game.textAlign = 'center';
 	//EN ESTA VARIABLE SE GUARDA EL ELEMENTO STRING
-	const map = maps[0];
+	const map = maps[level];
+
+	if (!map){
+		gameWin();
+		return;
+	}
+	if (!startTime) {
+		startTime = Date.now();
+		timeInterval = setInterval(showTime, 100);
+	}
+
+	showLives();
 	//LIMPIA EL STRING DE ESPACIOS Y \n
 	const mapRows = map.trim().split('\n');
 	bombasPosition = [];
-	//LIMPIA TODO EL CANVAS
 	game.clearRect(0,0, canvasSize,canvasSize)
+	
 	//CONVIERTE CADA FILA EN ELEMENTOS(COLUMNAS) DE UN ARRAY
 	const mapRowsCols = mapRows.map(row => row.trim().split(''));
 	console.log({map, mapRows, mapRowsCols})
@@ -74,27 +93,59 @@ function startGame() {
 }
 
 function movePlayer(){
-	const giftColisionX = playerPosition.x == giftPosition.x;
-	const giftColisionY = playerPosition.y == giftPosition.y;
+	const giftColisionX = playerPosition.x.toFixed(3) == giftPosition.x.toFixed(3);
+	const giftColisionY = playerPosition.y.toFixed(3) == giftPosition.y.toFixed(3);
 	const giftColision = giftColisionX && giftColisionY;
 	
 	if (giftColision) {
 		console.log('Colision')
+		levelWin()
 	}
 
 	const bombaColision = bombasPosition.find(enemy => {
-		const enemyColisX = enemy.x == playerPosition.x;
-		const enemyColisY = enemy.y == playerPosition.y;
+		const enemyColisX = enemy.x.toFixed(3) == playerPosition.x.toFixed(3);
+		const enemyColisY = enemy.y.toFixed(3) == playerPosition.y.toFixed(3);
 		return enemyColisX && enemyColisY;
 	});
 
 	if(bombaColision){
 		console.log('Bombassss')
+		levelFail()
 	}
+
 
 	const playerPosX = Math.floor(playerPosition.x * elemSize);
 	const playerPosY = Math.floor(playerPosition.y * elemSize);
 	game.fillText(emojis['PLAYER'], playerPosX, playerPosY);
+}
+
+function levelWin(){
+	console.log('subiste de nivel')
+	level ++;
+	startGame()
+}
+function gameWin(){
+	console.log('terminaste el juego')
+	clearInterval(timeInterval)
+}
+function levelFail(){
+	lives--;
+	if (lives == 0){
+		level = 0
+		lives = 3
+		startTime = undefined;
+		console.log({level, lives})
+	}
+
+	playerPosition.x = undefined;
+	playerPosition.y = undefined;
+	startGame()
+}
+function showLives() {
+	spanLives.textContent = emojis['HEART'].repeat(lives);
+}
+function showTime() {
+	spanTimes.innerHTML = Date.now() - startTime;
 }
 
 window.addEventListener('keydown', moveByKeys)
