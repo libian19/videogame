@@ -6,6 +6,8 @@ const btnRight = document.querySelector('#right');
 const btnDown = document.querySelector('#down');
 const spanLives = document.querySelector('#lives');
 const spanTimes = document.querySelector('#time');
+const spanRecord = document.querySelector('#record');
+const pResult = document.querySelector('#result')
 
 let canvasSize;
 let elemSize;
@@ -14,6 +16,9 @@ let lives = 3;
 let startTime;
 let timePlayer;
 let timeInterval;
+let recordTime;
+let playerTime;
+
 
 const playerPosition = {
 	x: undefined,
@@ -47,9 +52,11 @@ function startGame() {
 		gameWin();
 		return;
 	}
+
 	if (!startTime) {
 		startTime = Date.now();
 		timeInterval = setInterval(showTime, 100);
+		showRecord()
 	}
 
 	showLives();
@@ -127,7 +134,22 @@ function levelWin(){
 function gameWin(){
 	console.log('terminaste el juego')
 	clearInterval(timeInterval)
+	recordTime = localStorage.getItem('record');
+
+	if (recordTime) {
+		if (playerTime <= recordTime) {
+			localStorage.setItem('record', playerTime)
+			pResult.textContent = 'Felicitaciones superaste el record';
+		}else{
+			pResult.innerHTML = 'NO superaste el record';
+		}
+	}else {
+		localStorage.setItem('record', playerTime)
+		pResult.textContent = 'Es la primera marca, Exitos..'
+	}
+	console.log({recordTime, playerTime})
 }
+
 function levelFail(){
 	lives--;
 	if (lives == 0){
@@ -145,7 +167,12 @@ function showLives() {
 	spanLives.textContent = emojis['HEART'].repeat(lives);
 }
 function showTime() {
-	spanTimes.innerHTML = Date.now() - startTime;
+	playerTime = Date.now() - startTime;
+	spanTimes.innerHTML = playerTime;
+}
+function showRecord(){
+	spanRecord.innerHTML = localStorage.getItem('record')
+	
 }
 
 window.addEventListener('keydown', moveByKeys)
