@@ -2,8 +2,9 @@ body {
     background-color: indigo;
     color: #fff;  
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    margin: 0;
+    margin: 0 auto;
     padding: 0;
+    text-align: center;
   }
   
   .game-container {
@@ -41,6 +42,9 @@ body {
   button:not(:last-child) {
     margin-right: 10px;
   }
+  button:hover {
+    cursor: pointer;
+  }
   
   .messages {
     display: flex;
@@ -52,11 +56,38 @@ body {
   
   p {
     display: block;
-    margin: 0;
+    margin: 5px;
     width: 100%;
   }
-  
+  .invisible {
+    display: none;
+  }
+  .opacity {
+    background: black;
+    opacity: 0.8;
+  }
+  #modal {
+    width: min-content;
+    max-width: 320px;
+    position: absolute;
+    top: 15%;
+    background-color: indigo;
+    padding: 50px;
+    border-radius: 15px;
+    text-align: center;
+    z-index: 1;
+  }
+  #reiniciar {
+    margin-top: 30px;
+  }
+
+
   @media (max-width: 440px) {
-    button { margin-top: 25px; }
-    #up, #down { margin-left: 100%; margin-right: 100%; }
+    button { 
+      margin-top: 5px; 
+    }
+    #up, #down { 
+      margin-left: 100%;
+      margin-right: 100%; 
+    }
   }

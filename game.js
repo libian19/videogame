@@ -1,3 +1,4 @@
+const gameContainer = document.querySelector('.game-container');
 const canvas = document.querySelector('#game');
 const game = canvas.getContext('2d');
 const btnUp = document.querySelector('#up');
@@ -34,6 +35,8 @@ window.addEventListener('load', setCanvasSize);
 window.addEventListener('resize', setCanvasSize);
 
 function setCanvasSize() {
+	
+
 	canvasSize = Math.min(window.innerHeight, window.innerWidth)*0.75;
 	canvas.setAttribute('width', canvasSize);
 	canvas.setAttribute('height', canvasSize);
@@ -132,9 +135,16 @@ function levelWin(){
 	startGame()
 }
 function gameWin(){
-	console.log('terminaste el juego')
+	gameContainer.classList.add('opacity');
+	const modal = document.querySelector('#modal');
+	modal.classList.remove('invisible');
+	modal.style.display = 'block';
+
 	clearInterval(timeInterval)
 	recordTime = localStorage.getItem('record');
+
+	const reiniciar = document.querySelector('#reiniciar');
+	reiniciar.addEventListener('click', reinicio);
 
 	if (recordTime) {
 		if (playerTime <= recordTime) {
@@ -145,7 +155,7 @@ function gameWin(){
 		}
 	}else {
 		localStorage.setItem('record', playerTime)
-		pResult.textContent = 'Es la primera marca, Exitos..'
+		pResult.textContent = 'Es la primera marca.. Ahora, trata de superarla!!..'
 	}
 	console.log({recordTime, playerTime})
 }
@@ -173,6 +183,9 @@ function showTime() {
 function showRecord(){
 	spanRecord.innerHTML = localStorage.getItem('record')
 	
+}
+function reinicio(){
+	location.reload();
 }
 
 window.addEventListener('keydown', moveByKeys)
